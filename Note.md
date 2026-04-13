@@ -1,79 +1,153 @@
-## Step 0 — Problem Framing
+## Step 3 — Data Cleaning
 
-### Project title:
+### Objective
 
-Predicting Pavement Condition Index (PCI) Using Machine Learning
+Prepare the dataset for analysis and modeling by addressing data quality issues such as missing values, incorrect data types, duplicates, and outliers. The goal is to ensure that the dataset is **consistent, reliable, and suitable for machine learning**.
 
-### Problem statement:
+---
 
-Road agencies need a practical way to estimate pavement condition so they can prioritize maintenance before roads deteriorate too far. Manual PCI assessment is expensive, slow, and not always available for every road segment. In this project, students will build a regression model that predicts PCI from pavement, traffic, structural, environmental, and maintenance-related variables.
+### Why Data Cleaning Matters
 
-This fits your module exactly because the capstone is supposed to be an end-to-end machine learning project with data loading, cleaning, feature engineering, model training, evaluation, comparison, saving the model, and technical conclusions.
+Machine learning models are highly sensitive to data quality. Poor data leads to:
 
-### Target variable:
+- Biased or inaccurate predictions
+- Misleading model evaluation
+- Incorrect engineering conclusions
 
-PCI score, usually on a 0–100 scale.
+In civil engineering applications, this is critical because decisions (e.g., maintenance planning) depend directly on the results.
 
-### Practical meaning of the output:
+---
 
-The model should help answer:
-“Given the current road conditions and history, what PCI is likely for this pavement section?”
+### 3.1 Removing Duplicate Records
 
-### Engineering decision framing:
+Duplicate rows can occur due to repeated data entry or system errors.
 
-To make the project more meaningful, students should interpret PCI as:
+**Action:**
 
-PCI < 40 → poor condition, urgent intervention
-PCI 40–70 → moderate condition, maintenance needed
-PCI > 70 → good condition, low immediate risk
+- Detect duplicates using `.duplicated()`
+- Remove them to avoid bias in the model
 
-That turns the project from a pure prediction task into a maintenance support tool.
+**Engineering Insight:**
+Duplicate road segments would artificially increase the importance of certain conditions, leading to misleading predictions.
 
-## Step 1 — Dataset Understanding and Hypothesis Formation
+---
 
-Before any coding, students should first understand what the dataset represents and what engineering behavior they expect to see.
+### 3.2 Converting Data Types
 
-### What students must identify
+Some columns may be stored as text even though they represent numbers (e.g., "10000", "25%").
 
-They should answer:
+**Action:**
 
-What does each row represent?
-For example, one road section, one pavement sample, or one inspection record.
-What does each feature mean physically?
-Which variable is the target?
-Which variables are likely to influence PCI most?
-Example feature groups
+- Identify object (text) columns
+- Convert numeric-like columns to proper numeric types
 
-### A good PCI dataset may include:
+**Engineering Insight:**
+Machine learning models require numerical input. Incorrect data types can silently break model performance.
 
-Pavement age
-Traffic volume
-Heavy vehicle percentage
-Pavement thickness
-Number of lanes
-Subgrade strength / CBR
-Rainfall or temperature
-Years since last maintenance
-Required hypotheses
+---
 
-Students should write 3 to 5 simple but meaningful hypotheses before looking too deeply at the data.
+### 3.3 Validating the Target Variable (PCI)
 
-Example hypotheses:
+The Pavement Condition Index (PCI) must lie within a valid engineering range.
 
-#### Older pavements will have lower PCI.
+**Expected Range:**
 
-#### Road sections with higher heavy-vehicle traffic will have lower PCI.
+- PCI ∈ [0, 100]
 
-#### Thicker pavement layers will be associated with higher PCI.
+**Action:**
 
-#### Roads with recent maintenance will show higher PCI.
+- Detect values outside this range
+- Clip or correct invalid values
 
-#### Poor subgrade strength will reduce PCI over time.
+**Engineering Insight:**
+PCI is a standardized index. Values outside 0–100 indicate data errors and must be corrected before modeling.
 
-Why this step matters
+---
 
-This step forces students to think like engineers, not just coders. They are not merely fitting a model; they are testing whether the data behaves in a way that matches real pavement deterioration logic.
+### 3.4 Handling Missing Values
 
-A short section like this:
+Missing data is common in real-world engineering datasets.
 
-The objective of this project is to predict Pavement Condition Index (PCI) using regression-based machine learning models. We assume that pavement age, traffic loading, structural properties, environmental exposure, and maintenance history influence PCI. The following hypotheses will be tested through exploratory data analysis and model building.
+**Action:**
+
+- For numerical columns → fill with **median**
+- For categorical columns → fill with **mode** or "Unknown"
+
+**Why Median?**
+
+- Robust to outliers
+- Preserves distribution better than mean
+
+**Engineering Insight:**
+Removing rows with missing values may lead to loss of important data, especially when datasets are small.
+
+---
+
+### 3.5 Outlier Detection and Treatment (IQR Method)
+
+Outliers are extreme values that may result from:
+
+- Measurement errors
+- Data entry mistakes
+- Rare but real engineering events
+
+**Method Used: Interquartile Range (IQR)**
+
+- Q1 = 25th percentile
+- Q3 = 75th percentile
+- IQR = Q3 − Q1
+
+**Outlier Bounds:**
+
+- Lower = Q1 − 1.5 × IQR
+- Upper = Q3 + 1.5 × IQR
+
+**Action:**
+
+- Detect outliers using IQR
+- Cap values within bounds (instead of removing rows)
+
+**Engineering Insight:**
+In civil engineering, extreme values can represent real failures (e.g., very high traffic or severe distress).  
+Therefore, **capping is preferred over deletion** to retain information.
+
+---
+
+### 3.6 Final Consistency Check
+
+After cleaning, verify that:
+
+- No missing values remain
+- Data types are correct
+- Target variable is valid
+- Dataset shape is consistent
+
+**Engineering Insight:**
+This step ensures the dataset is ready for analysis and prevents errors in later stages.
+
+---
+
+### 3.7 Saving Cleaned Data
+
+Save the processed dataset for reuse in later steps.
+
+**Outputs:**
+
+- Cleaned dataset (`.csv`)
+- Cleaning audit report
+
+**Engineering Insight:**
+Reproducibility is essential in research. Saving intermediate results ensures that experiments can be repeated and verified.
+
+---
+
+### Summary
+
+At the end of this step, the dataset should be:
+
+- Clean and consistent
+- Free of duplicates and missing values
+- Properly formatted
+- Ready for exploratory data analysis and modeling
+
+This step forms the foundation for all subsequent machine learning work.
