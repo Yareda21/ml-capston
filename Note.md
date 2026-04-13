@@ -1,79 +1,147 @@
-## Step 0 — Problem Framing
+## Step 4 — Exploratory Data Analysis (EDA)
 
-### Project title:
+### Objective
 
-Predicting Pavement Condition Index (PCI) Using Machine Learning
+Understand the cleaned pavement dataset before building machine learning models. The goal of EDA is to discover patterns, relationships, trends, and possible data issues that may affect PCI prediction.
 
-### Problem statement:
+---
 
-Road agencies need a practical way to estimate pavement condition so they can prioritize maintenance before roads deteriorate too far. Manual PCI assessment is expensive, slow, and not always available for every road segment. In this project, students will build a regression model that predicts PCI from pavement, traffic, structural, environmental, and maintenance-related variables.
+### Why EDA Matters
 
-This fits your module exactly because the capstone is supposed to be an end-to-end machine learning project with data loading, cleaning, feature engineering, model training, evaluation, comparison, saving the model, and technical conclusions.
+EDA helps us answer important questions such as:
 
-### Target variable:
+- Which variables appear to influence PCI?
+- Are the relationships linear or nonlinear?
+- Are there any unusual patterns or hidden issues in the data?
+- Which features are likely to be useful for regression modeling?
 
-PCI score, usually on a 0–100 scale.
+For civil engineering, this step is important because the data must make engineering sense before any model is trusted.
 
-### Practical meaning of the output:
+---
 
-The model should help answer:
-“Given the current road conditions and history, what PCI is likely for this pavement section?”
+### 4.1 Load the Cleaned Dataset
 
-### Engineering decision framing:
+Use the cleaned file `pci_cleaned_data.csv` created in Step 3.
 
-To make the project more meaningful, students should interpret PCI as:
+**Purpose:**
 
-PCI < 40 → poor condition, urgent intervention
-PCI 40–70 → moderate condition, maintenance needed
-PCI > 70 → good condition, low immediate risk
+- Confirm that the cleaned dataset is ready for analysis
+- Inspect the shape, column names, and summary statistics again
 
-That turns the project from a pure prediction task into a maintenance support tool.
+---
 
-## Step 1 — Dataset Understanding and Hypothesis Formation
+### 4.2 Check the Distribution of the Target Variable
 
-Before any coding, students should first understand what the dataset represents and what engineering behavior they expect to see.
+The target variable is **PCI**.
 
-### What students must identify
+**What to look for:**
 
-They should answer:
+- Is PCI concentrated in one range?
+- Are there too many high or low values?
+- Is the distribution balanced enough for regression?
 
-What does each row represent?
-For example, one road section, one pavement sample, or one inspection record.
-What does each feature mean physically?
-Which variable is the target?
-Which variables are likely to influence PCI most?
-Example feature groups
+**Engineering Insight:**
+If most PCI values are very high or very low, the model may learn poorly and produce biased predictions.
 
-### A good PCI dataset may include:
+---
 
-Pavement age
-Traffic volume
-Heavy vehicle percentage
-Pavement thickness
-Number of lanes
-Subgrade strength / CBR
-Rainfall or temperature
-Years since last maintenance
-Required hypotheses
+### 4.3 Explore Feature Distributions
 
-Students should write 3 to 5 simple but meaningful hypotheses before looking too deeply at the data.
+Examine the distribution of all main input features such as:
 
-Example hypotheses:
+- pavement_age_years
+- aadt
+- heavy_vehicle_percentage
+- pavement_thickness_mm
+- subgrade_cbr
+- annual_rainfall_mm
+- mean_temperature_c
+- years_since_last_maintenance
+- distress_density
 
-#### Older pavements will have lower PCI.
+**What to look for:**
 
-#### Road sections with higher heavy-vehicle traffic will have lower PCI.
+- Skewness
+- Spread
+- Extreme values
+- Whether features look realistic for civil engineering data
 
-#### Thicker pavement layers will be associated with higher PCI.
+---
 
-#### Roads with recent maintenance will show higher PCI.
+### 4.4 Relationship Between Each Feature and PCI
 
-#### Poor subgrade strength will reduce PCI over time.
+Use scatter plots to examine how each variable relates to PCI.
 
-Why this step matters
+**Expected patterns:**
 
-This step forces students to think like engineers, not just coders. They are not merely fitting a model; they are testing whether the data behaves in a way that matches real pavement deterioration logic.
+- PCI should decrease as pavement age increases
+- PCI should decrease as traffic and heavy vehicle percentage increase
+- PCI should increase with greater pavement thickness and better subgrade strength
+- PCI should decrease with larger maintenance gaps and higher distress density
 
-A short section like this:
+**Engineering Insight:**
+These trends should match pavement deterioration logic. If they do not, the data or feature engineering may need review.
 
-The objective of this project is to predict Pavement Condition Index (PCI) using regression-based machine learning models. We assume that pavement age, traffic loading, structural properties, environmental exposure, and maintenance history influence PCI. The following hypotheses will be tested through exploratory data analysis and model building.
+---
+
+### 4.5 Correlation Analysis
+
+Compute a correlation matrix to identify:
+
+- Strong positive relationships
+- Strong negative relationships
+- Possible multicollinearity among predictors
+
+**Why this matters:**
+
+- Linear and Ridge/Lasso models are sensitive to correlated predictors
+- Correlation helps identify which features are likely important
+- It helps avoid redundant variables
+
+---
+
+### 4.6 Detect Possible Multicollinearity
+
+Look for pairs of features that are strongly correlated with each other.
+
+**Examples:**
+
+- aadt and heavy_vehicle_percentage may be related
+- pavement_age_years and years_since_last_maintenance may also be related
+
+**Engineering Insight:**
+Some variables may represent similar physical behavior. This matters when interpreting regression coefficients.
+
+---
+
+### 4.7 Feature Engineering Check
+
+Before modeling, confirm whether any derived features should be created later, such as:
+
+- Traffic Load Index
+- Maintenance Gap
+
+This EDA step helps decide whether the original variables are enough or whether additional engineered features will improve model performance.
+
+---
+
+### 4.8 EDA Summary
+
+At the end of this step, the student should be able to explain:
+
+- Which variables appear most influential
+- Whether the data behaves realistically
+- Whether regression is appropriate
+- Which features deserve special attention during modeling
+
+---
+
+### Expected Output from This Step
+
+- Summary statistics
+- Distribution plots
+- Scatter plots
+- Correlation heatmap
+- Short written interpretation of the main patterns
+
+This step prepares the dataset for feature engineering and model training.
