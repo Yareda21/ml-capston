@@ -1,79 +1,95 @@
-## Step 0 — Problem Framing
+## Step 5 — Feature Engineering
 
-### Project title:
+### Objective
 
-Predicting Pavement Condition Index (PCI) Using Machine Learning
+Enhance the dataset by creating new features that better represent real-world pavement behavior. The goal is to improve model performance by incorporating **engineering knowledge** into the data.
 
-### Problem statement:
+---
 
-Road agencies need a practical way to estimate pavement condition so they can prioritize maintenance before roads deteriorate too far. Manual PCI assessment is expensive, slow, and not always available for every road segment. In this project, students will build a regression model that predicts PCI from pavement, traffic, structural, environmental, and maintenance-related variables.
+### Why Feature Engineering Matters
 
-This fits your module exactly because the capstone is supposed to be an end-to-end machine learning project with data loading, cleaning, feature engineering, model training, evaluation, comparison, saving the model, and technical conclusions.
+Raw data often does not fully capture the relationships needed for accurate prediction. Feature engineering allows us to:
 
-### Target variable:
+- Combine variables to reflect real physical behavior
+- Improve model accuracy
+- Reduce noise and ambiguity
+- Introduce domain-specific intelligence into the model
 
-PCI score, usually on a 0–100 scale.
+In civil engineering, this step is critical because many important factors (like traffic load or maintenance impact) are not directly given but must be derived.
 
-### Practical meaning of the output:
+---
 
-The model should help answer:
-“Given the current road conditions and history, what PCI is likely for this pavement section?”
+### 5.1 Traffic Load Index
 
-### Engineering decision framing:
+**Definition:**
+Traffic Load Index = AADT × Heavy Vehicle Percentage
 
-To make the project more meaningful, students should interpret PCI as:
+**Purpose:**
 
-PCI < 40 → poor condition, urgent intervention
-PCI 40–70 → moderate condition, maintenance needed
-PCI > 70 → good condition, low immediate risk
+- Captures the combined effect of traffic volume and heavy vehicles
+- Heavy vehicles contribute significantly more to pavement damage
 
-That turns the project from a pure prediction task into a maintenance support tool.
+**Engineering Insight:**
+Two roads with the same AADT may deteriorate differently if one has more trucks. This feature captures that difference.
 
-## Step 1 — Dataset Understanding and Hypothesis Formation
+---
 
-Before any coding, students should first understand what the dataset represents and what engineering behavior they expect to see.
+### 5.2 Maintenance Gap
 
-### What students must identify
+**Definition:**
+Maintenance Gap = Years Since Last Maintenance
 
-They should answer:
+**Purpose:**
 
-What does each row represent?
-For example, one road section, one pavement sample, or one inspection record.
-What does each feature mean physically?
-Which variable is the target?
-Which variables are likely to influence PCI most?
-Example feature groups
+- Represents how long the pavement has been left without intervention
 
-### A good PCI dataset may include:
+**Engineering Insight:**
+Longer maintenance gaps typically lead to lower PCI due to accumulated damage.
 
-Pavement age
-Traffic volume
-Heavy vehicle percentage
-Pavement thickness
-Number of lanes
-Subgrade strength / CBR
-Rainfall or temperature
-Years since last maintenance
-Required hypotheses
+---
 
-Students should write 3 to 5 simple but meaningful hypotheses before looking too deeply at the data.
+### 5.3 Optional Feature Transformations (Advanced Insight)
 
-Example hypotheses:
+Depending on the dataset, students may optionally:
 
-#### Older pavements will have lower PCI.
+- Apply log transformation to highly skewed variables (e.g., AADT)
+- Normalize variables if distributions are extreme
+- Combine environmental variables into a climate severity index
 
-#### Road sections with higher heavy-vehicle traffic will have lower PCI.
+These are optional and should only be applied if justified by EDA.
 
-#### Thicker pavement layers will be associated with higher PCI.
+---
 
-#### Roads with recent maintenance will show higher PCI.
+### 5.4 Feature Selection Preparation
 
-#### Poor subgrade strength will reduce PCI over time.
+After feature engineering:
 
-Why this step matters
+- Identify all usable input features
+- Exclude non-informative columns such as IDs
+- Separate features (X) and target (y)
 
-This step forces students to think like engineers, not just coders. They are not merely fitting a model; they are testing whether the data behaves in a way that matches real pavement deterioration logic.
+---
 
-A short section like this:
+### 5.5 Engineering Validation
 
-The objective of this project is to predict Pavement Condition Index (PCI) using regression-based machine learning models. We assume that pavement age, traffic loading, structural properties, environmental exposure, and maintenance history influence PCI. The following hypotheses will be tested through exploratory data analysis and model building.
+Students must verify:
+
+- Do new features make engineering sense?
+- Do they improve correlation with PCI?
+- Are there redundant or highly correlated variables?
+
+---
+
+### 5.6 Output of This Step
+
+At the end of this step:
+
+- The dataset includes both original and engineered features
+- Features are ready for model training
+- A new dataset is saved for reproducibility
+
+---
+
+### Summary
+
+Feature engineering bridges the gap between raw data and real-world engineering behavior. This step ensures that the machine learning model learns from **meaningful, physically relevant inputs**, not just raw numbers.
