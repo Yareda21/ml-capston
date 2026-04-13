@@ -1,147 +1,95 @@
-## Step 4 — Exploratory Data Analysis (EDA)
+## Step 5 — Feature Engineering
 
 ### Objective
 
-Understand the cleaned pavement dataset before building machine learning models. The goal of EDA is to discover patterns, relationships, trends, and possible data issues that may affect PCI prediction.
+Enhance the dataset by creating new features that better represent real-world pavement behavior. The goal is to improve model performance by incorporating **engineering knowledge** into the data.
 
 ---
 
-### Why EDA Matters
+### Why Feature Engineering Matters
 
-EDA helps us answer important questions such as:
+Raw data often does not fully capture the relationships needed for accurate prediction. Feature engineering allows us to:
 
-- Which variables appear to influence PCI?
-- Are the relationships linear or nonlinear?
-- Are there any unusual patterns or hidden issues in the data?
-- Which features are likely to be useful for regression modeling?
+- Combine variables to reflect real physical behavior
+- Improve model accuracy
+- Reduce noise and ambiguity
+- Introduce domain-specific intelligence into the model
 
-For civil engineering, this step is important because the data must make engineering sense before any model is trusted.
+In civil engineering, this step is critical because many important factors (like traffic load or maintenance impact) are not directly given but must be derived.
 
 ---
 
-### 4.1 Load the Cleaned Dataset
+### 5.1 Traffic Load Index
 
-Use the cleaned file `pci_cleaned_data.csv` created in Step 3.
+**Definition:**
+Traffic Load Index = AADT × Heavy Vehicle Percentage
 
 **Purpose:**
 
-- Confirm that the cleaned dataset is ready for analysis
-- Inspect the shape, column names, and summary statistics again
-
----
-
-### 4.2 Check the Distribution of the Target Variable
-
-The target variable is **PCI**.
-
-**What to look for:**
-
-- Is PCI concentrated in one range?
-- Are there too many high or low values?
-- Is the distribution balanced enough for regression?
+- Captures the combined effect of traffic volume and heavy vehicles
+- Heavy vehicles contribute significantly more to pavement damage
 
 **Engineering Insight:**
-If most PCI values are very high or very low, the model may learn poorly and produce biased predictions.
+Two roads with the same AADT may deteriorate differently if one has more trucks. This feature captures that difference.
 
 ---
 
-### 4.3 Explore Feature Distributions
+### 5.2 Maintenance Gap
 
-Examine the distribution of all main input features such as:
+**Definition:**
+Maintenance Gap = Years Since Last Maintenance
 
-- pavement_age_years
-- aadt
-- heavy_vehicle_percentage
-- pavement_thickness_mm
-- subgrade_cbr
-- annual_rainfall_mm
-- mean_temperature_c
-- years_since_last_maintenance
-- distress_density
+**Purpose:**
 
-**What to look for:**
-
-- Skewness
-- Spread
-- Extreme values
-- Whether features look realistic for civil engineering data
-
----
-
-### 4.4 Relationship Between Each Feature and PCI
-
-Use scatter plots to examine how each variable relates to PCI.
-
-**Expected patterns:**
-
-- PCI should decrease as pavement age increases
-- PCI should decrease as traffic and heavy vehicle percentage increase
-- PCI should increase with greater pavement thickness and better subgrade strength
-- PCI should decrease with larger maintenance gaps and higher distress density
+- Represents how long the pavement has been left without intervention
 
 **Engineering Insight:**
-These trends should match pavement deterioration logic. If they do not, the data or feature engineering may need review.
+Longer maintenance gaps typically lead to lower PCI due to accumulated damage.
 
 ---
 
-### 4.5 Correlation Analysis
+### 5.3 Optional Feature Transformations (Advanced Insight)
 
-Compute a correlation matrix to identify:
+Depending on the dataset, students may optionally:
 
-- Strong positive relationships
-- Strong negative relationships
-- Possible multicollinearity among predictors
+- Apply log transformation to highly skewed variables (e.g., AADT)
+- Normalize variables if distributions are extreme
+- Combine environmental variables into a climate severity index
 
-**Why this matters:**
-
-- Linear and Ridge/Lasso models are sensitive to correlated predictors
-- Correlation helps identify which features are likely important
-- It helps avoid redundant variables
+These are optional and should only be applied if justified by EDA.
 
 ---
 
-### 4.6 Detect Possible Multicollinearity
+### 5.4 Feature Selection Preparation
 
-Look for pairs of features that are strongly correlated with each other.
+After feature engineering:
 
-**Examples:**
-
-- aadt and heavy_vehicle_percentage may be related
-- pavement_age_years and years_since_last_maintenance may also be related
-
-**Engineering Insight:**
-Some variables may represent similar physical behavior. This matters when interpreting regression coefficients.
+- Identify all usable input features
+- Exclude non-informative columns such as IDs
+- Separate features (X) and target (y)
 
 ---
 
-### 4.7 Feature Engineering Check
+### 5.5 Engineering Validation
 
-Before modeling, confirm whether any derived features should be created later, such as:
+Students must verify:
 
-- Traffic Load Index
-- Maintenance Gap
-
-This EDA step helps decide whether the original variables are enough or whether additional engineered features will improve model performance.
-
----
-
-### 4.8 EDA Summary
-
-At the end of this step, the student should be able to explain:
-
-- Which variables appear most influential
-- Whether the data behaves realistically
-- Whether regression is appropriate
-- Which features deserve special attention during modeling
+- Do new features make engineering sense?
+- Do they improve correlation with PCI?
+- Are there redundant or highly correlated variables?
 
 ---
 
-### Expected Output from This Step
+### 5.6 Output of This Step
 
-- Summary statistics
-- Distribution plots
-- Scatter plots
-- Correlation heatmap
-- Short written interpretation of the main patterns
+At the end of this step:
 
-This step prepares the dataset for feature engineering and model training.
+- The dataset includes both original and engineered features
+- Features are ready for model training
+- A new dataset is saved for reproducibility
+
+---
+
+### Summary
+
+Feature engineering bridges the gap between raw data and real-world engineering behavior. This step ensures that the machine learning model learns from **meaningful, physically relevant inputs**, not just raw numbers.
