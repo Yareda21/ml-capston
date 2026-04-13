@@ -1,153 +1,147 @@
-## Step 3 — Data Cleaning
+## Step 4 — Exploratory Data Analysis (EDA)
 
 ### Objective
 
-Prepare the dataset for analysis and modeling by addressing data quality issues such as missing values, incorrect data types, duplicates, and outliers. The goal is to ensure that the dataset is **consistent, reliable, and suitable for machine learning**.
+Understand the cleaned pavement dataset before building machine learning models. The goal of EDA is to discover patterns, relationships, trends, and possible data issues that may affect PCI prediction.
 
 ---
 
-### Why Data Cleaning Matters
+### Why EDA Matters
 
-Machine learning models are highly sensitive to data quality. Poor data leads to:
+EDA helps us answer important questions such as:
 
-- Biased or inaccurate predictions
-- Misleading model evaluation
-- Incorrect engineering conclusions
+- Which variables appear to influence PCI?
+- Are the relationships linear or nonlinear?
+- Are there any unusual patterns or hidden issues in the data?
+- Which features are likely to be useful for regression modeling?
 
-In civil engineering applications, this is critical because decisions (e.g., maintenance planning) depend directly on the results.
+For civil engineering, this step is important because the data must make engineering sense before any model is trusted.
 
 ---
 
-### 3.1 Removing Duplicate Records
+### 4.1 Load the Cleaned Dataset
 
-Duplicate rows can occur due to repeated data entry or system errors.
+Use the cleaned file `pci_cleaned_data.csv` created in Step 3.
 
-**Action:**
+**Purpose:**
 
-- Detect duplicates using `.duplicated()`
-- Remove them to avoid bias in the model
+- Confirm that the cleaned dataset is ready for analysis
+- Inspect the shape, column names, and summary statistics again
+
+---
+
+### 4.2 Check the Distribution of the Target Variable
+
+The target variable is **PCI**.
+
+**What to look for:**
+
+- Is PCI concentrated in one range?
+- Are there too many high or low values?
+- Is the distribution balanced enough for regression?
 
 **Engineering Insight:**
-Duplicate road segments would artificially increase the importance of certain conditions, leading to misleading predictions.
+If most PCI values are very high or very low, the model may learn poorly and produce biased predictions.
 
 ---
 
-### 3.2 Converting Data Types
+### 4.3 Explore Feature Distributions
 
-Some columns may be stored as text even though they represent numbers (e.g., "10000", "25%").
+Examine the distribution of all main input features such as:
 
-**Action:**
+- pavement_age_years
+- aadt
+- heavy_vehicle_percentage
+- pavement_thickness_mm
+- subgrade_cbr
+- annual_rainfall_mm
+- mean_temperature_c
+- years_since_last_maintenance
+- distress_density
 
-- Identify object (text) columns
-- Convert numeric-like columns to proper numeric types
+**What to look for:**
+
+- Skewness
+- Spread
+- Extreme values
+- Whether features look realistic for civil engineering data
+
+---
+
+### 4.4 Relationship Between Each Feature and PCI
+
+Use scatter plots to examine how each variable relates to PCI.
+
+**Expected patterns:**
+
+- PCI should decrease as pavement age increases
+- PCI should decrease as traffic and heavy vehicle percentage increase
+- PCI should increase with greater pavement thickness and better subgrade strength
+- PCI should decrease with larger maintenance gaps and higher distress density
 
 **Engineering Insight:**
-Machine learning models require numerical input. Incorrect data types can silently break model performance.
+These trends should match pavement deterioration logic. If they do not, the data or feature engineering may need review.
 
 ---
 
-### 3.3 Validating the Target Variable (PCI)
+### 4.5 Correlation Analysis
 
-The Pavement Condition Index (PCI) must lie within a valid engineering range.
+Compute a correlation matrix to identify:
 
-**Expected Range:**
+- Strong positive relationships
+- Strong negative relationships
+- Possible multicollinearity among predictors
 
-- PCI ∈ [0, 100]
+**Why this matters:**
 
-**Action:**
+- Linear and Ridge/Lasso models are sensitive to correlated predictors
+- Correlation helps identify which features are likely important
+- It helps avoid redundant variables
 
-- Detect values outside this range
-- Clip or correct invalid values
+---
+
+### 4.6 Detect Possible Multicollinearity
+
+Look for pairs of features that are strongly correlated with each other.
+
+**Examples:**
+
+- aadt and heavy_vehicle_percentage may be related
+- pavement_age_years and years_since_last_maintenance may also be related
 
 **Engineering Insight:**
-PCI is a standardized index. Values outside 0–100 indicate data errors and must be corrected before modeling.
+Some variables may represent similar physical behavior. This matters when interpreting regression coefficients.
 
 ---
 
-### 3.4 Handling Missing Values
+### 4.7 Feature Engineering Check
 
-Missing data is common in real-world engineering datasets.
+Before modeling, confirm whether any derived features should be created later, such as:
 
-**Action:**
+- Traffic Load Index
+- Maintenance Gap
 
-- For numerical columns → fill with **median**
-- For categorical columns → fill with **mode** or "Unknown"
-
-**Why Median?**
-
-- Robust to outliers
-- Preserves distribution better than mean
-
-**Engineering Insight:**
-Removing rows with missing values may lead to loss of important data, especially when datasets are small.
+This EDA step helps decide whether the original variables are enough or whether additional engineered features will improve model performance.
 
 ---
 
-### 3.5 Outlier Detection and Treatment (IQR Method)
+### 4.8 EDA Summary
 
-Outliers are extreme values that may result from:
+At the end of this step, the student should be able to explain:
 
-- Measurement errors
-- Data entry mistakes
-- Rare but real engineering events
-
-**Method Used: Interquartile Range (IQR)**
-
-- Q1 = 25th percentile
-- Q3 = 75th percentile
-- IQR = Q3 − Q1
-
-**Outlier Bounds:**
-
-- Lower = Q1 − 1.5 × IQR
-- Upper = Q3 + 1.5 × IQR
-
-**Action:**
-
-- Detect outliers using IQR
-- Cap values within bounds (instead of removing rows)
-
-**Engineering Insight:**
-In civil engineering, extreme values can represent real failures (e.g., very high traffic or severe distress).  
-Therefore, **capping is preferred over deletion** to retain information.
+- Which variables appear most influential
+- Whether the data behaves realistically
+- Whether regression is appropriate
+- Which features deserve special attention during modeling
 
 ---
 
-### 3.6 Final Consistency Check
+### Expected Output from This Step
 
-After cleaning, verify that:
+- Summary statistics
+- Distribution plots
+- Scatter plots
+- Correlation heatmap
+- Short written interpretation of the main patterns
 
-- No missing values remain
-- Data types are correct
-- Target variable is valid
-- Dataset shape is consistent
-
-**Engineering Insight:**
-This step ensures the dataset is ready for analysis and prevents errors in later stages.
-
----
-
-### 3.7 Saving Cleaned Data
-
-Save the processed dataset for reuse in later steps.
-
-**Outputs:**
-
-- Cleaned dataset (`.csv`)
-- Cleaning audit report
-
-**Engineering Insight:**
-Reproducibility is essential in research. Saving intermediate results ensures that experiments can be repeated and verified.
-
----
-
-### Summary
-
-At the end of this step, the dataset should be:
-
-- Clean and consistent
-- Free of duplicates and missing values
-- Properly formatted
-- Ready for exploratory data analysis and modeling
-
-This step forms the foundation for all subsequent machine learning work.
+This step prepares the dataset for feature engineering and model training.
