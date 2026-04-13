@@ -77,3 +77,60 @@ This step forces students to think like engineers, not just coders. They are not
 A short section like this:
 
 The objective of this project is to predict Pavement Condition Index (PCI) using regression-based machine learning models. We assume that pavement age, traffic loading, structural properties, environmental exposure, and maintenance history influence PCI. The following hypotheses will be tested through exploratory data analysis and model building.
+
+## step 2 — Data Loading and Initial Audit - setp2.py file
+
+This step is about understanding the dataset before any cleaning or modeling. The goal is to check whether the data is usable, what problems exist, and what actions are needed before EDA and model training. That fits the course design, since the module requires data loading, cleaning, and preparation before model comparison.
+
+## 2.1 Load the dataset
+
+Students should load the CSV file with pandas and inspect the first few rows.
+
+import pandas as pd
+
+df = pd.read_csv("pavement_condition_data.csv")
+df.head()
+
+## 2.2 Basic structure check
+
+They should inspect:
+
+- number of rows and columns
+- column names
+- data types
+- missing values
+- df.shape
+- df.info()
+- df.isnull().sum()
+- df.describe()
+
+## 2.3 What students must look for
+
+They should identify:
+
+- columns with missing values
+- numeric columns stored as text
+- impossible values, such as negative traffic volume
+- PCI values outside the valid range of 0 to 100
+- duplicate records
+- obvious outliers
+
+### 2.4 Data Audit Table
+
+A top student should not just inspect the dataset mentally; they should record the issues in a table like this:
+
+![alt text](image.png)
+
+## 2.5 What they should conclude
+
+At the end of this step, students should write a short audit summary such as:
+
+The dataset contains numerical pavement and traffic variables suitable for regression modeling. Initial inspection shows missing values, possible outliers, and a few columns requiring type correction. These issues must be handled before exploratory analysis and model training.
+
+## 2.6 Why this step is important
+
+This is where students prove discipline. Good machine learning starts with data quality, not with algorithms. A weak audit here will produce weak model results later.
+
+## 2.7 Notebook section title
+
+Use this exact heading in the notebook:
